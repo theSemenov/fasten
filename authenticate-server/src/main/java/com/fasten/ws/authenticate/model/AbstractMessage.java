@@ -1,4 +1,5 @@
-package com.fasten.ws.authenticate;
+package com.fasten.ws.authenticate.model;
+
 
 public abstract class AbstractMessage<D> implements Message<D>{
 	

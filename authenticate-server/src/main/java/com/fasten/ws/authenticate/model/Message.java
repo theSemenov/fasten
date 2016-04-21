@@ -1,6 +1,8 @@
-package com.fasten.ws.authenticate;
+package com.fasten.ws.authenticate.model;
 
-public interface Message<D> {
+import java.io.Serializable;
+
+public interface Message<D> extends Serializable {
 
 	String getType();
 	String getSequenceId();

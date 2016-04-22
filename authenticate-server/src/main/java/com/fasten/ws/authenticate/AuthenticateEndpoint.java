@@ -24,9 +24,8 @@ public class AuthenticateEndpoint {
 		
 	
 	@OnMessage
-	public String onMessage(Message<?> message, Session session) throws MessageNotSuportException {
+	public void onMessage(Message<?> message, Session session) throws MessageNotSuportException {
 			messageProcessor.forSession(session).process(message);
-			return message.getSequenceId() + " delivered";
 		
 	}
 	

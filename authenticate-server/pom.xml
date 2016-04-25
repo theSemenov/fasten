@@ -79,7 +79,7 @@
 			<plugin>
 				<groupId>org.wildfly.plugins</groupId>
 				<artifactId>wildfly-maven-plugin</artifactId>
-				<version>1.1.0.Alpha1</version>
+				<version>1.1.0.Alpha7</version>
 				<configuration>
 					<javaOpts>
 						<javaOpt>${jboss-debug}</javaOpt>
@@ -90,6 +90,18 @@
 						<server-arg>-Dorg.apache.catalina.connector.URI_ENCODING=UTF-8</server-arg>
 						<server-arg>-Dorg.apache.catalina.connector.USE_BODY_ENCODING_FOR_QUERY_STRING=true</server-arg>
 					</server-args>
+					<add-user>
+                        <users>
+                            <user>
+                                <username>admin</username>
+                                <password>admin</password>
+                                <groups>
+                                    <group>admin</group>
+                                    <group>user</group>
+                                </groups>
+                            </user>
+                        </users>
+                    </add-user>
 				</configuration>
 			</plugin>
 		</plugins>

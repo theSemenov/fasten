@@ -4,4 +4,5 @@ public class QueryNames {
 	public final static String FIND_USER = "findUser";
 	public final static String FIND_TOKEN_BY_EMAIL = "findTokenByEmail";
 	public final static String FIND_TOKEN_BY_TOKENID = "findTokenByTokenId";
+	public final static String  FIND_TOKEN_HISTORY_BY_EMAIL = "findTokenHistoryByEmail";
 }

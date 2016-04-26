@@ -11,7 +11,10 @@ import com.fasten.ws.authenticate.model.ErrorMessage;
 import com.fasten.ws.authenticate.model.LoginMessage;
 import com.fasten.ws.authenticate.model.Message;
 import com.fasten.ws.authenticate.model.MessageTypes;
+import com.fasten.ws.authenticate.model.ObjectMessage;
+import com.fasten.ws.authenticate.model.RegisterMessage;
 import com.fasten.ws.authenticate.model.TokenMessage;
+import com.fasten.ws.authenticate.model.UnregisterMessage;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
@@ -45,6 +48,16 @@ public class MessageDecoder implements Decoder.Text<Message<?>> {
 			}
 			if (MessageTypes.CUSTOMER_ERROR_TYPE.equals(type)) {
 				return decodeMessage(s, ErrorMessage.class);
+			}
+			if (MessageTypes.REGISTER_CUSTOMER_TYPE.equals(type)) {
+				return decodeMessage(s, RegisterMessage.class);
+			}
+			if (MessageTypes.UNREGISTER_CUSTOMER_TYPE.equals(type)) {
+				return decodeMessage(s, UnregisterMessage.class);
+			}
+			try {
+				return decodeMessage(s, ObjectMessage.class);
+			} catch (Exception e) {
 			}
 		} catch (JsonSyntaxException e) {
 			throw new DecodeException(s, "string is not json");

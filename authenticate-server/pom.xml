@@ -5,10 +5,23 @@
 	<artifactId>authenticate-server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>authenticate-serve</name>
+	<name>authenticate-server</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<hsqldb.artifact>hsqldb</hsqldb.artifact>
+		<hsqldb.version>2.3.3</hsqldb.version>
+		<hsqldb.url>jdbc:hsqldb:file:target/db/auth/AuthDB</hsqldb.url>
+		<hsqldb.datasource>java:jboss/datasources/ExampleFileDS</hsqldb.datasource>
+		<hsqldb.username>sa</hsqldb.username>
+		<hsqldb.password>sa</hsqldb.password>
+
+		<postgresql.artifact>postgresql</postgresql.artifact>
+		<postgresql.version>9.1-901-1.jdbc4</postgresql.version>
+		<postgresql.url>jdbc:postgresql://localhost/fasten</postgresql.url>
+		<postgresql.datasource>java:jboss/datasources/PostgreDS</postgresql.datasource>
+		<postgresql.username>postgres</postgresql.username>
+		<postgresql.password>password</postgresql.password>
 	</properties>
 	<profiles>
 		<profile>
@@ -16,6 +29,18 @@
 			<properties>
 				<jboss-debug>-Xdebug</jboss-debug>
 				<jboss-debug-transport>-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8787</jboss-debug-transport>
+			</properties>
+		</profile>
+		<profile>
+			<id>hsqldb-database</id>
+			<properties>
+				<datasource>${hsqldb.datasource}</datasource>
+			</properties>
+		</profile>
+		<profile>
+			<id>postgres-database</id>
+			<properties>
+				<datasource>${postgresql.datasource}</datasource>
 			</properties>
 		</profile>
 	</profiles>
@@ -42,26 +67,82 @@
 			<artifactId>jboss-websocket-api_1.1_spec</artifactId>
 			<version>1.1.1.Final</version>
 		</dependency>
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>${hsqldb.artifact}</artifactId>
+			<version>${hsqldb.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.4.191</version>
+		</dependency>
+		<dependency>
+			<groupId>postgresql</groupId>
+			<artifactId>${postgresql.artifact}</artifactId>
+			<version>${postgresql.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.9.3</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.10</version>
+		</dependency>
+
 	</dependencies>
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 		<plugins>
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<configuration>
+					<mainClass>org.h2.tools.Server</mainClass>
+				</configuration>
+			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.4</version>
+
 			</plugin>
 			<plugin>
 				<groupId>org.wildfly.plugins</groupId>
 				<artifactId>wildfly-maven-plugin</artifactId>
 				<version>1.1.0.Alpha7</version>
+
 				<configuration>
 					<javaOpts>
 						<javaOpt>${jboss-debug}</javaOpt>
@@ -84,6 +165,43 @@
 							</user>
 						</users>
 					</add-user>
+					<beforeDeployment>
+						<commands>
+							<!-- Add hsqldb and datasource -->
+							<command>module add --name=org.hsqldb
+								--resources=/target/lib/${hsqldb.artifact}-${hsqldb.version}.jar
+								--dependencies=javax.api,javax.transaction.api</command>
+
+							<command>if (outcome != success) of
+								/subsystem=datasources/jdbc-driver=hsqldb:add(driver-name="hsqldb",driver-module-name="org.hsqldb",driver-class-name=org.hsqldb.jdbcDriver)</command>
+							<command>/system-property=test:add(value=true)</command>
+							<command>end-if</command>
+
+							<command>data-source add
+								--jndi-name=${hsqldb.datasource}
+								--name=ExampleFilePool
+								--connection-url=jdbc:hsqldb:file:/target/db/auth/AuthDB
+								--driver-name=hsqldb --user-name=${hsqldb.username}
+								--password=${hsqldb.password}</command>
+
+							<!-- Add postgresql jdbc and datasource -->
+							<command>module add --name=postgresql
+								--resources=/target/lib/${postgresql.artifact}-${postgresql.version}.jar
+								--dependencies=javax.api,javax.transaction.api</command>
+
+							<command>if (outcome != success) of
+								/subsystem=datasources/jdbc-driver=postgre:add(driver-name="postgre",driver-module-name="postgresql",driver-class-name=org.postgresql.Driver)</command>
+							<command>/system-property=test:add(value=true)</command>
+							<command>end-if</command>
+
+							<command>data-source add
+								--jndi-name=${postgresql.datasource}
+								--name=PostgrePool
+								--connection-url=jdbc:postgresql://localhost/fasten
+								--driver-name=postgre --user-name=${postgresql.username}
+								--password=${postgresql.password}</command>
+						</commands>
+					</beforeDeployment>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -6,7 +6,9 @@ import java.util.List;
 import javax.websocket.EncodeException;
 import javax.websocket.Session;
 
-public interface Callback<D> {
+import com.fasten.ws.authenticate.model.Message;
+
+public interface Callback<D extends Message<?>> {
 
 	void call(D data, List<Session> sessions);
 

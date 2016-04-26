@@ -2,12 +2,16 @@ package com.fasten.ws.authenticate.model;
 
 import java.io.Serializable;
 
+import com.google.gson.annotations.SerializedName;
+
 public class LoginModel implements Serializable {
+	@SerializedName("email")
 	private String eamil;
-	private String data;
-	
+	@SerializedName("password")
+	private String password;
+
 	public LoginModel() {
-		
+
 	}
 
 	public String getEamil() {
@@ -18,12 +22,12 @@ public class LoginModel implements Serializable {
 		this.eamil = eamil;
 	}
 
-	public String getData() {
-		return data;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setData(String data) {
-		this.data = data;
+	public void setPassword(String password) {
+		this.password = password;
 	}
-	
+
 }

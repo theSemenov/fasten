@@ -2,12 +2,19 @@ package com.fasten.ws.authenticate.model;
 
 import java.io.Serializable;
 
+import com.fasten.ws.authenticate.processor.MessageProcessorException;
+
 public class ErrorModel implements Serializable {
 	private String errorDescription = "Customer not found";
 	private String errorCode = "customer.notFound";
 
 	public ErrorModel() {
 		
+	}
+
+	public ErrorModel(MessageProcessorException e) {
+		this.errorCode = e.getCode();
+		this.errorDescription = e.getMessage();
 	}
 
 	public String getErrorDescription() {

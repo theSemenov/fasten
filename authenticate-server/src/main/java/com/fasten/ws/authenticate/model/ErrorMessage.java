@@ -1,7 +1,10 @@
 package com.fasten.ws.authenticate.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class ErrorMessage extends AbstractMessage<ErrorModel> {
-	private ErrorModel error;
+	@SerializedName("data")
+	private ErrorModel data;
 	
 	{
 		setType(MessageTypes.CUSTOMER_ERROR_TYPE);
@@ -11,14 +14,18 @@ public class ErrorMessage extends AbstractMessage<ErrorModel> {
 		
 	}
 	
+	public ErrorMessage(ErrorModel data) {
+		this.data = data;
+	}
+	
 	@Override
 	public ErrorModel getData() {
-		return error;
+		return data;
 	}
 
 	@Override
-	public void setData(ErrorModel error) {
-		this.error = error;
+	public void setData(ErrorModel data) {
+		this.data = data;
 		
 	}
 

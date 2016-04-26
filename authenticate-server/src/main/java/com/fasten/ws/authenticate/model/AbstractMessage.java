@@ -1,11 +1,14 @@
 package com.fasten.ws.authenticate.model;
 
+import com.google.gson.annotations.SerializedName;
+
 
 public abstract class AbstractMessage<D> implements Message<D>{
-	
+	@SerializedName("type")
 	private String type;
+	@SerializedName("sequence_id")
 	private String sequenceId;
-
+	
 	@Override
 	public String getType() {
 		return  type;

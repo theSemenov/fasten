@@ -32,29 +32,11 @@
 			<version>7.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxrs</artifactId>
-			<version>3.0.4.Final</version>
-			<scope>test</scope>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.6.2</version>
 		</dependency>
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jackson-provider</artifactId>
-			<version>3.0.4.Final</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-			<version>2.6.0-rc3</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-			<version>2.6.0-rc3</version>
-			<scope>test</scope>
-		</dependency>
+
 		<dependency>
 			<groupId>org.jboss.spec.javax.websocket</groupId>
 			<artifactId>jboss-websocket-api_1.1_spec</artifactId>
@@ -91,17 +73,17 @@
 						<server-arg>-Dorg.apache.catalina.connector.USE_BODY_ENCODING_FOR_QUERY_STRING=true</server-arg>
 					</server-args>
 					<add-user>
-                        <users>
-                            <user>
-                                <username>admin</username>
-                                <password>admin</password>
-                                <groups>
-                                    <group>admin</group>
-                                    <group>user</group>
-                                </groups>
-                            </user>
-                        </users>
-                    </add-user>
+						<users>
+							<user>
+								<username>admin</username>
+								<password>admin</password>
+								<groups>
+									<group>admin</group>
+									<group>user</group>
+								</groups>
+							</user>
+						</users>
+					</add-user>
 				</configuration>
 			</plugin>
 		</plugins>

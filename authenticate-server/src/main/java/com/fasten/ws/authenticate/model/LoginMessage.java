@@ -1,8 +1,9 @@
 package com.fasten.ws.authenticate.model;
 
-import java.io.Serializable;
+import com.google.gson.annotations.SerializedName;
 
 public class LoginMessage extends AbstractMessage<LoginModel> {
+	@SerializedName("data")
 	private LoginModel data;
 
 	{

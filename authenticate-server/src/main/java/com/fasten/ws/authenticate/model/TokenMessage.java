@@ -1,7 +1,10 @@
 package com.fasten.ws.authenticate.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class TokenMessage extends AbstractMessage<TokenModel>{
-	private TokenModel token;
+	@SerializedName("data")
+	private TokenModel data;
 	
 	{
 		setType(MessageTypes.CUSTOMER_API_TOKEN_TYPE);
@@ -12,12 +15,12 @@ public class TokenMessage extends AbstractMessage<TokenModel>{
 	
 	@Override
 	public TokenModel getData() {
-		return token;
+		return data;
 	}
 
 	@Override
-	public void setData(TokenModel token) {
-		this.token = token;
+	public void setData(TokenModel data) {
+		this.data = data;
 	}
 	
 }

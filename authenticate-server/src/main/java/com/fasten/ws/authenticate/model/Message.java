@@ -2,6 +2,7 @@ package com.fasten.ws.authenticate.model;
 
 import java.io.Serializable;
 
+
 public interface Message<D> extends Serializable {
 
 	String getType();

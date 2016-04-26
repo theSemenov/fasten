@@ -42,6 +42,13 @@
 			<artifactId>jboss-websocket-api_1.1_spec</artifactId>
 			<version>1.1.1.Final</version>
 		</dependency>
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>2.3.3</version>
+			<scope>runtime</scope>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>
@@ -49,8 +56,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -62,6 +69,43 @@
 				<groupId>org.wildfly.plugins</groupId>
 				<artifactId>wildfly-maven-plugin</artifactId>
 				<version>1.1.0.Alpha7</version>
+				<!--executions>
+					< execution>
+						<id>res</id>
+						<phase>package</phase>
+						<goals>
+							<goal>deploy-artifact</goal>
+						</goals>
+						<configuration>
+							<groupId>org.hsqldb</groupId>
+							<artifactId>hsqldb</artifactId>
+							<name>hsqldb.jar</name>
+						</configuration>
+					</execution>
+					<execution>
+						<id>add-datasource</id>
+						<phase>install</phase>
+						<goals>
+							<goal>add-resource</goal>
+						</goals>
+						<configuration>
+							<address>subsystem=datasources,data-source=java:jboss/testDs</address>
+							<resources>
+								<resource>
+									<properties>
+										<jndi-name>java:jboss/testDs</jndi-name>
+										<enabled>true</enabled>
+										<connection-url>jdbc:hsqldb:file:testdb</connection-url>
+										<driver-class>org.hsqldb.jdbc.JDBCDriver</driver-class>
+										<driver-name>hsqldb</driver-name>
+										<user-name>sa</user-name>
+										<password>sa</password>
+									</properties>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions-->
 				<configuration>
 					<javaOpts>
 						<javaOpt>${jboss-debug}</javaOpt>
@@ -84,6 +128,7 @@
 							</user>
 						</users>
 					</add-user>
+
 				</configuration>
 			</plugin>
 		</plugins>

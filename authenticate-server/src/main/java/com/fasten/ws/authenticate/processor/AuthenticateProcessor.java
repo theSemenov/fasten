@@ -8,6 +8,9 @@ import java.util.Set;
 
 import javax.websocket.Session;
 
+import com.fasten.ws.authenticate.db.AuthenticateDAO;
+import com.fasten.ws.authenticate.exceptions.AuthenticateServiceException;
+import com.fasten.ws.authenticate.exceptions.MessageProcessorException;
 import com.fasten.ws.authenticate.model.ErrorMessage;
 import com.fasten.ws.authenticate.model.ErrorModel;
 import com.fasten.ws.authenticate.model.LoginMessage;
@@ -23,6 +26,7 @@ public class AuthenticateProcessor<M extends Message<?>> implements
 	private List<Callback<ErrorMessage>> errorCallbacks = new ArrayList<Callback<ErrorMessage>>();
 	private List<Callback<TokenMessage>> successCallbacks = new ArrayList<Callback<TokenMessage>>();
 	private Set<Session> sessions = new HashSet<Session>();
+	private AuthenticateDAO dao;
 
 	@Override
 	public MessageProcessor<M, TokenMessage, ErrorMessage> addSuccessCallback(
@@ -53,31 +57,37 @@ public class AuthenticateProcessor<M extends Message<?>> implements
 				throw new MessageProcessorException("message not suport",
 						"message.not.suport");
 			}
-			
+
+			if(dao == null) {
+				throw new MessageProcessorException("authenticate dao is null",
+						"authenticate.dao.is.null");
+			}
 			validateMessage(message);
 			LoginMessage loginMessage = (LoginMessage) message;
 			LoginModel data = loginMessage.getData();
-			try {
-				
-				loginMessage.getData().getEamil();
-				TokenModel token = new TokenModel();
-				token.setApiToken("afdd312c-3d2a-45ee-aa61-468aba3397f3");
-				token.setApiTokenExpirationDate(new Date());
-				TokenMessage tm = new TokenMessage();
-				tm.setSequenceId(loginMessage.getSequenceId());
-				tm.setData(token);
-				for (Callback<TokenMessage> calback : successCallbacks) {
-					calback.call(tm, new ArrayList<Session>(sessions));
-				}
-			} catch (Exception e) {
-				throw new MessageProcessorException("some exception", "some.exception", e);
+
+			TokenModel token = dao.authenticate(data.getEamil(),
+					data.getPassword());
+			if (token == null) {
+
 			}
-		} catch (MessageProcessorException e) {
+			TokenMessage tm = new TokenMessage();
+			tm.setSequenceId(loginMessage.getSequenceId());
+			tm.setData(token);
+			for (Callback<TokenMessage> calback : successCallbacks) {
+				calback.call(tm, new ArrayList<Session>(sessions));
+			}
+
+		} catch (AuthenticateServiceException e) {
 			processException(e);
+			throw new MessageProcessorException("some exception", "some.exception", e);
+		} catch (Exception e) {
+			throw new MessageProcessorException("some exception", "some.exception", e);
+
 		}
 	}
 
-	private void processException(MessageProcessorException e) {
+	private void processException(AuthenticateServiceException e) {
 		for (Callback<ErrorMessage> calback : errorCallbacks) {
 			ErrorMessage message = new ErrorMessage(new ErrorModel(e));
 			calback.call(message, new ArrayList<Session>(sessions));
@@ -85,7 +95,6 @@ public class AuthenticateProcessor<M extends Message<?>> implements
 	}
 
 	private void validateMessage(M message) throws MessageProcessorException {
-		
 
 		LoginMessage loginMessage = (LoginMessage) message;
 		String sequenceId = message.getSequenceId();
@@ -94,17 +103,17 @@ public class AuthenticateProcessor<M extends Message<?>> implements
 					"sequenceId.is.empty");
 		}
 		LoginModel lm = loginMessage.getData();
-		if(lm == null) {
+		if (lm == null) {
 			throw new MessageProcessorException("login data is empty",
 					"login.data.is.empty");
 		}
 		String email = lm.getEamil();
-		if(email == null || email.isEmpty()) {
+		if (email == null || email.isEmpty()) {
 			throw new MessageProcessorException("email is empty",
 					"email.data.is.empty");
 		}
 		String password = lm.getPassword();
-		if(password == null || password.isEmpty()) {
+		if (password == null || password.isEmpty()) {
 			throw new MessageProcessorException("email is empty",
 					"email.data.is.empty");
 		}
@@ -114,6 +123,13 @@ public class AuthenticateProcessor<M extends Message<?>> implements
 	public MessageProcessor<M, TokenMessage, ErrorMessage> forSession(
 			Session session) {
 		sessions.add(session);
+		return this;
+	}
+
+	@Override
+	public MessageProcessor<M, TokenMessage, ErrorMessage> withAuthenticateDao(
+			AuthenticateDAO dao) {
+		this.dao = dao;
 		return this;
 	}
 

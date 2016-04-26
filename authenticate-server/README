@@ -1,0 +1,13 @@
+Приложение поставщик сервисов
+
+Запуск сервера и приложения
+	mvn wildfly:run
+	
+Запуск сервера и приложения в режиме отладки
+	mvn wildfly:run -P debug
+	
+Остановка сервера
+	mvn wildfly:shutdown
+	
+Пересборка приложения
+	mvn wildfly:undeploy wildfly:deploy

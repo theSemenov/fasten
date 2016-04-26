@@ -1,5 +1,6 @@
 package com.fasten.ws.authenticate;
 
+import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.websocket.CloseReason;
 import javax.websocket.OnClose;
@@ -11,12 +12,13 @@ import javax.websocket.server.ServerEndpoint;
 
 import com.fasten.ws.authenticate.codec.MessageDecoder;
 import com.fasten.ws.authenticate.codec.MessageEncoder;
+import com.fasten.ws.authenticate.db.AuthenticateDAO;
+import com.fasten.ws.authenticate.exceptions.MessageProcessorException;
 import com.fasten.ws.authenticate.model.ErrorMessage;
 import com.fasten.ws.authenticate.model.LoginMessage;
 import com.fasten.ws.authenticate.model.Message;
 import com.fasten.ws.authenticate.model.TokenMessage;
 import com.fasten.ws.authenticate.processor.AuthenticateProcessor;
-import com.fasten.ws.authenticate.processor.MessageProcessorException;
 import com.fasten.ws.authenticate.processor.MessageProcessor;
 import com.fasten.ws.authenticate.processor.handler.AuthenticateErrorCllback;
 import com.fasten.ws.authenticate.processor.handler.AuthenticateSuccessCallback;
@@ -30,6 +32,8 @@ public class AuthenticateEndpoint {
 	private AuthenticateErrorCllback errorCllback;
 	@Inject
 	private AuthenticateSuccessCallback successCllback;
+	@EJB
+	private AuthenticateDAO dao;
 	
 	@OnMessage
 	public void onMessage(Session session, Message<?> message) throws MessageProcessorException {
@@ -40,6 +44,7 @@ public class AuthenticateEndpoint {
 		messageProcessor
 						.addErrorCallback(errorCllback)
 						.addSuccessCallback(successCllback)
+						.withAuthenticateDao(dao)
 						.forSession(session)
 						.process(message);
 		

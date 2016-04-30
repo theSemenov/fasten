@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @Table(name="user_token_history_tbl")
 public class UserTokenHistoryEntity extends HasToken {
 	private String action;
-	
+
 	public UserTokenHistoryEntity() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -35,4 +35,5 @@ public class UserTokenHistoryEntity extends HasToken {
 	public void setAction(String action) {
 		this.action = action;
 	}
+
 }

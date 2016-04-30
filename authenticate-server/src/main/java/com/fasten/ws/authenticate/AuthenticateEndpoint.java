@@ -23,7 +23,7 @@ import com.fasten.ws.authenticate.model.Message;
 import com.fasten.ws.authenticate.processor.MessageProcessorFactory;
 import com.fasten.ws.authenticate.processor.handler.AuthenticateErrorCllback;
 import com.fasten.ws.authenticate.processor.handler.AuthenticateSuccessCallback;
-
+ 
 @ServerEndpoint(value = "/auth", decoders={MessageDecoder.class}, encoders={MessageEncoder.class})
 public class AuthenticateEndpoint {
 	@Inject

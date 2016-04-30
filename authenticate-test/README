@@ -1,0 +1,5 @@
+Сборка 
+	mvp package
+	
+Запуск теста
+	java -jar authenticate-test-*.jar

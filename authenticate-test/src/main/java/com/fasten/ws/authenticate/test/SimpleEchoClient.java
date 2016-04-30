@@ -14,9 +14,9 @@ import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 public class SimpleEchoClient {
-	private Integer numberTask = 500;
+	private Integer numberTask = 50;
 	private Integer completedTask = 0;
-	private Integer treadCount = 9;
+	private Integer treadCount = 1;
 	private String nl = System.getProperty("line.separator");
 
 	public static void main(String[] args) throws URISyntaxException,

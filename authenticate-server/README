@@ -1,13 +1,28 @@
 Приложение поставщик сервисов
 
-Запуск сервера и приложения
-	mvn wildfly:run
+Настройки в pom.xml
+	Секция <properties> одержит настройки подключения к БД
+	Есть преднастроенные настройки для БД hsqldb (jdbc:hsqldb:file:target/db/auth/AuthDB)
+	Есть преднастроенные настройки для БД postgresql (jdbc:postgresql://localhost/fasten)
+	
+	
+Запуск сервера и приложения c БД hsqldb
+	mvn wildfly:run -P hsqldb-database
+	
+Запуск сервера и приложения c БД hsqldb
+	mvn wildfly:run -P postgres-database
 	
 Запуск сервера и приложения в режиме отладки
-	mvn wildfly:run -P debug
+	mvn wildfly:run -P debug,postgres-database
+	mvn wildfly:run -P debug,hsqldb-database
 	
 Остановка сервера
 	mvn wildfly:shutdown
 	
 Пересборка приложения
-	mvn wildfly:undeploy wildfly:deploy
+	mvn wildfly:undeploy wildfly:deploy -P postgres-database
+	mvn wildfly:undeploy wildfly:deploy -P hsqldb-database
+	
+Сборка war
+	mvn package -P postgres-database
+	mvn package -P hsqldb-database

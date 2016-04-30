@@ -176,7 +176,7 @@
 								/subsystem=datasources/jdbc-driver=hsqldb:add(driver-name="hsqldb",driver-module-name="org.hsqldb",driver-class-name=org.hsqldb.jdbcDriver)</command>
 							<command>/system-property=test:add(value=true)</command>
 							<command>end-if</command>
-
+ 
 							<command>data-source add
 								--jndi-name=${hsqldb.datasource}
 								--name=ExampleFilePool

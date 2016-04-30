@@ -15,7 +15,7 @@
 		<hsqldb.datasource>java:jboss/datasources/ExampleFileDS</hsqldb.datasource>
 		<hsqldb.username>sa</hsqldb.username>
 		<hsqldb.password>sa</hsqldb.password>
-
+ 
 		<postgresql.artifact>postgresql</postgresql.artifact>
 		<postgresql.version>9.1-901-1.jdbc4</postgresql.version>
 		<postgresql.url>jdbc:postgresql://localhost/fasten</postgresql.url>

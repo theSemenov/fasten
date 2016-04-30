@@ -2,7 +2,6 @@ package com.fasten.ws.authenticate;
 
 import java.io.IOException;
 
-import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.websocket.CloseReason;
 import javax.websocket.DecodeException;
@@ -10,23 +9,17 @@ import javax.websocket.EncodeException;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
 import com.fasten.ws.authenticate.codec.MessageDecoder;
 import com.fasten.ws.authenticate.codec.MessageEncoder;
 import com.fasten.ws.authenticate.db.AuthenticateDAO;
-import com.fasten.ws.authenticate.db.DefaultAuthenticateDAO;
 import com.fasten.ws.authenticate.exceptions.AuthenticateServiceException;
 import com.fasten.ws.authenticate.exceptions.MessageProcessorException;
 import com.fasten.ws.authenticate.model.ErrorMessage;
 import com.fasten.ws.authenticate.model.ErrorModel;
-import com.fasten.ws.authenticate.model.LoginMessage;
 import com.fasten.ws.authenticate.model.Message;
-import com.fasten.ws.authenticate.model.TokenMessage;
-import com.fasten.ws.authenticate.processor.AuthenticateProcessor;
-import com.fasten.ws.authenticate.processor.MessageProcessor;
 import com.fasten.ws.authenticate.processor.MessageProcessorFactory;
 import com.fasten.ws.authenticate.processor.handler.AuthenticateErrorCllback;
 import com.fasten.ws.authenticate.processor.handler.AuthenticateSuccessCallback;

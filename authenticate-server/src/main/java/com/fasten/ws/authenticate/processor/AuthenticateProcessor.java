@@ -10,6 +10,10 @@ import java.util.Set;
 import javax.ejb.Stateless;
 import javax.websocket.Session;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasten.ws.authenticate.AuthenticateEndpoint;
 import com.fasten.ws.authenticate.db.AuthenticateDAO;
 import com.fasten.ws.authenticate.exceptions.AuthenticateServiceException;
 import com.fasten.ws.authenticate.exceptions.DatabaseException;
@@ -31,6 +35,7 @@ import com.fasten.ws.authenticate.processor.handler.Callback;
 @Stateless
 public class AuthenticateProcessor<M extends Message<?>> implements
 		MessageProcessor<M> {
+	private static Logger _log = LoggerFactory.getLogger(AuthenticateEndpoint.class);
 	private List<Callback<ErrorMessage>> errorCallbacks = new ArrayList<Callback<ErrorMessage>>();
 	private List<Callback<? extends Message<?>>> successCallbacks = new ArrayList<Callback<? extends Message<?>>>();
 	private List<String> supportedMessages = new ArrayList<String>() {{
@@ -83,8 +88,10 @@ public class AuthenticateProcessor<M extends Message<?>> implements
 			}
 
 		} catch (AuthenticateServiceException e) {
+			_log.error(e.getMessage(), e);
 			processException(e, sequenceId);
 		} catch (Exception e) {
+			_log.error(e.getMessage(), e);
 			MessageProcessorException me = new MessageProcessorException("some exception", "some.exception", e);
 			processException(me, sequenceId);
 			throw me;
@@ -105,7 +112,7 @@ public class AuthenticateProcessor<M extends Message<?>> implements
 				session.getBasicRemote().flushBatch();
 				session.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				_log.error(e.getMessage(), e);
 			}
 		}
 	}

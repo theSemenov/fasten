@@ -7,6 +7,10 @@ import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasten.ws.authenticate.AuthenticateEndpoint;
 import com.fasten.ws.authenticate.model.ErrorMessage;
 import com.fasten.ws.authenticate.model.LoginMessage;
 import com.fasten.ws.authenticate.model.Message;
@@ -21,17 +25,14 @@ import com.google.gson.JsonSyntaxException;
 
 public class MessageDecoder implements Decoder.Text<Message<?>> {
 	private Gson gson = ObjectFactory.getGson();
+	private static Logger _log = LoggerFactory.getLogger(MessageDecoder.class);
 
 	@Override
 	public void init(EndpointConfig config) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void destroy() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -40,6 +41,7 @@ public class MessageDecoder implements Decoder.Text<Message<?>> {
 		try {
 			JsonObject jsonObj = gson.fromJson(s, JsonObject.class);
 			String type = jsonObj.get("type").getAsString();
+			_log.error("incoming message with type: " + type);
 			if (MessageTypes.LOGIN_CUSTOMER_TYPE.equals(type)) {
 				return decodeMessage(s, LoginMessage.class);
 			}
@@ -58,10 +60,13 @@ public class MessageDecoder implements Decoder.Text<Message<?>> {
 			try {
 				return decodeMessage(s, ObjectMessage.class);
 			} catch (Exception e) {
+				_log.info(e.getMessage(), e);
 			}
 		} catch (JsonSyntaxException e) {
+			_log.error(e.getMessage(), e);
 			throw new DecodeException(s, "string is not json");
 		}
+		_log.error(s + " is not suported type");
 		throw new DecodeException(s, "not suported type");
 
 	}
@@ -72,7 +77,7 @@ public class MessageDecoder implements Decoder.Text<Message<?>> {
 		try {
 			obj = gson.fromJson(s, clazz);
 		} catch (Exception e) {
-			e.printStackTrace();
+			_log.error(e.getMessage(), e);
 			throw new DecodeException(s, "", e);
 		}
 		return obj;
@@ -84,11 +89,11 @@ public class MessageDecoder implements Decoder.Text<Message<?>> {
 			JsonObject jsonObj = gson.fromJson(s, JsonObject.class);
 			String type = jsonObj.get("type").getAsString();
 			if (type == null) {
-//				_log.error("type not set in message " + s);
+				_log.error("type not set in message " + s);
 				return false;
 			}
 		} catch (JsonSyntaxException e) {
-		//	_log.error("string is not json " + s);
+			_log.error("string is not json " + s);
 			return false;
 		}
 		return true;

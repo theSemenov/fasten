@@ -9,8 +9,12 @@ import javax.websocket.EncodeException;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
+import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasten.ws.authenticate.codec.MessageDecoder;
 import com.fasten.ws.authenticate.codec.MessageEncoder;
@@ -34,38 +38,44 @@ public class AuthenticateEndpoint {
 	private AuthenticateSuccessCallback<?> successCllback;
 	@Inject
 	private AuthenticateDAO dao;
-	
+	private static Logger _log = LoggerFactory.getLogger(AuthenticateEndpoint.class);
+
 	@SuppressWarnings("unchecked")
 	@OnMessage
 	public void onMessage(Session session, Message<?> message) throws MessageProcessorException {
+		_log.info("[onOpen] start process");
 		processorFactory.get().addErrorCallback(errorCllback)
 						.addSuccessCallback(successCllback)
 						.withAuthenticateDao(dao)
 						.forSession(session)
 						.process(message);
+		_log.info("[onOpen] end process");
+	}
+
+	@OnOpen
+	public void onOpen(Session session) {
+		_log.info("[onOpen] ");
 		
 	}
-	/*
-	@OnOpen
-	public String onOpen(Session session, String message) {
-		System.out.println("Server[onOpen]: " + message);
-		return message;
-	}
-*/
+	
 	@OnClose
 	public void onClose(CloseReason reason) {
-		
+		_log.info("[onClose] ");
+		if (reason != null) {
+			_log.info(reason.getCloseCode() + ": " + reason.getReasonPhrase());
+		}
 	}
 	
 	@OnError
 	public void onError(Session session, Throwable e) {
+		_log.error("[onError]", e);
 		if(e instanceof DecodeException) {
 			AuthenticateServiceException ae = new AuthenticateServiceException(e.getMessage(), "some.exception");
 			ErrorMessage em = new ErrorMessage(new ErrorModel(ae));
 			try {
 				session.getBasicRemote().sendObject(em);
 			} catch (IOException | EncodeException e1) {
-				e1.printStackTrace();
+				_log.error("" ,e);
 			}
 		}
 	}

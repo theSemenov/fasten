@@ -9,6 +9,9 @@ import javax.websocket.EncodeException;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasten.ws.authenticate.model.ErrorMessage;
 import com.fasten.ws.authenticate.model.LoginMessage;
 import com.fasten.ws.authenticate.model.Message;
@@ -20,7 +23,8 @@ import com.google.gson.JsonSyntaxException;
 
 public class MessageEncoder implements Encoder.Text<Message<?>> {
 	private Gson gson = ObjectFactory.getGson();
-	
+	private static Logger _log = LoggerFactory.getLogger(MessageEncoder.class);
+
 	@Override
 	public void init(EndpointConfig config) {
 		// TODO Auto-generated method stub
@@ -35,8 +39,15 @@ public class MessageEncoder implements Encoder.Text<Message<?>> {
 
 	@Override
 	public String encode(Message<?> object) throws EncodeException {
-		String json = gson.toJson(object);
-		return json;
+		_log.info("start encoding");
+		try {
+			String json = gson.toJson(object);
+			_log.info("encoded message encoding: " + json);
+			return json;
+		} catch (Exception e) {
+			_log.error(e.getMessage(), e);
+			throw e;
+		}
 	}
 	
 

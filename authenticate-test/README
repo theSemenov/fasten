@@ -1,3 +1,6 @@
+Адрес сервиса зашит в коде(Task.class)
+	ws://localhost:8080/wsauhenticate/auth
+	
 Сборка 
 	mvp package
 	

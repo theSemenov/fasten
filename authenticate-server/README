@@ -1,4 +1,6 @@
-
+Адрес сервиса
+	ws://localhost:8080/wsauhenticate/auth
+	
 Настройки в pom.xml
 	Секция <properties> одержит настройки подключения к БД
 	Есть преднастроенные настройки для БД hsqldb (jdbc:hsqldb:file:target/db/auth/AuthDB)
@@ -9,19 +11,24 @@
 	mvn wildfly:run -P hsqldb-database
 	
 Запуск сервера и приложения c БД hsqldb
-	mvn wildfly:run -P postgres-database
+	mvn wildfly:run -P postgresql-database
 	
 Запуск сервера и приложения в режиме отладки
-	mvn wildfly:run -P debug,postgres-database
+	mvn wildfly:run -P debug,postgresql-database
 	mvn wildfly:run -P debug,hsqldb-database
 	
 Остановка сервера
 	mvn wildfly:shutdown
 	
 Пересборка приложения
-	mvn wildfly:undeploy wildfly:deploy -P postgres-database
+	mvn wildfly:undeploy wildfly:deploy -P postgresql-database
 	mvn wildfly:undeploy wildfly:deploy -P hsqldb-database
 	
 Сборка war
-	mvn package -P postgres-database
+	mvn package -P postgresql-database
 	mvn package -P hsqldb-database
+	
+Список профилей
+	debug - профиль для запуска приложения в режиме отладки, порт 8787
+	postgresql-database - профиль для запуска приложения с БД postgresql, не совместим с профилем hsqldb-database 
+	hsqldb-database - профиль для запуска приложения с БД hsqldb, не совместим с профилем postgresql-database. Запускается по умолчанию

@@ -12,13 +12,15 @@
 		<hsqldb.artifact>hsqldb</hsqldb.artifact>
 		<hsqldb.version>2.3.3</hsqldb.version>
 		<hsqldb.url>jdbc:hsqldb:file:target/db/auth/AuthDB</hsqldb.url>
+		<hsqldb.class>org.hsqldb.jdbcDriver</hsqldb.class>
 		<hsqldb.datasource>java:jboss/datasources/ExampleFileDS</hsqldb.datasource>
 		<hsqldb.username>sa</hsqldb.username>
 		<hsqldb.password>sa</hsqldb.password>
- 
+
 		<postgresql.artifact>postgresql</postgresql.artifact>
 		<postgresql.version>9.1-901-1.jdbc4</postgresql.version>
 		<postgresql.url>jdbc:postgresql://localhost/fasten</postgresql.url>
+		<postgresql.class>org.postgresql.Driver</postgresql.class>
 		<postgresql.datasource>java:jboss/datasources/PostgreDS</postgresql.datasource>
 		<postgresql.username>postgres</postgresql.username>
 		<postgresql.password>password</postgresql.password>
@@ -33,12 +35,15 @@
 		</profile>
 		<profile>
 			<id>hsqldb-database</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
 			<properties>
 				<datasource>${hsqldb.datasource}</datasource>
 			</properties>
 		</profile>
 		<profile>
-			<id>postgres-database</id>
+			<id>postgresql-database</id>
 			<properties>
 				<datasource>${postgresql.datasource}</datasource>
 			</properties>
@@ -173,14 +178,14 @@
 								--dependencies=javax.api,javax.transaction.api</command>
 
 							<command>if (outcome != success) of
-								/subsystem=datasources/jdbc-driver=hsqldb:add(driver-name="hsqldb",driver-module-name="org.hsqldb",driver-class-name=org.hsqldb.jdbcDriver)</command>
+								/subsystem=datasources/jdbc-driver=hsqldb:add(driver-name="hsqldb",driver-module-name="org.hsqldb",driver-class-name=${hsqldb.class})</command>
 							<command>/system-property=test:add(value=true)</command>
 							<command>end-if</command>
- 
+
 							<command>data-source add
 								--jndi-name=${hsqldb.datasource}
 								--name=ExampleFilePool
-								--connection-url=jdbc:hsqldb:file:/target/db/auth/AuthDB
+								--connection-url=${hsqldb.url}
 								--driver-name=hsqldb --user-name=${hsqldb.username}
 								--password=${hsqldb.password}</command>
 
@@ -190,14 +195,14 @@
 								--dependencies=javax.api,javax.transaction.api</command>
 
 							<command>if (outcome != success) of
-								/subsystem=datasources/jdbc-driver=postgre:add(driver-name="postgre",driver-module-name="postgresql",driver-class-name=org.postgresql.Driver)</command>
+								/subsystem=datasources/jdbc-driver=postgre:add(driver-name="postgre",driver-module-name="postgresql",driver-class-name=${postgresql.class})</command>
 							<command>/system-property=test:add(value=true)</command>
 							<command>end-if</command>
 
 							<command>data-source add
 								--jndi-name=${postgresql.datasource}
 								--name=PostgrePool
-								--connection-url=jdbc:postgresql://localhost/fasten
+								--connection-url=${postgresql.url}
 								--driver-name=postgre --user-name=${postgresql.username}
 								--password=${postgresql.password}</command>
 						</commands>

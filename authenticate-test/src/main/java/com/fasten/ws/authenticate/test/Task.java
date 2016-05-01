@@ -7,19 +7,29 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Task implements Callable<String> {
 	private User user;
-	private StringBuilder log = new StringBuilder();
+	private String endpointUri;
+	private StringBuilder trace = new StringBuilder();
 	private String nl = System.getProperty("line.separator");
-	public Task(User user) {
+	private static Logger _log = LoggerFactory.getLogger(Task.class);
+
+	public Task(User user, String endpointUri) {
 		this.user = user;
+		if(endpointUri == null || endpointUri.isEmpty()) {
+			throw new NullPointerException("endpointUri can not be null or empty");
+		}
+		this.endpointUri = endpointUri;
 	}
 	
 	@Override
 	public String call() throws Exception {
 		Long taskStart = System.currentTimeMillis();
-		log.append("*****" + nl + "email: "+ user.getEmail() + nl + "password: " + user.getPassword() + nl + "[" + nl);
-		MyClientEndpoint ep = new MyClientEndpoint(new URI("ws://localhost:8080/wsauhenticate/auth"), log);
+		trace.append("*****" + nl + "email: "+ user.getEmail() + nl + "password: " + user.getPassword() + nl + "[" + nl);
+		MyClientEndpoint ep = new MyClientEndpoint(new URI(endpointUri), trace);
 		try{
 			String messageReg = MessageBuilder.buildRegisterCustomerMessage(
 					user.getEmail(), user.getPassword());
@@ -33,13 +43,14 @@ public class Task implements Callable<String> {
 					user.getEmail(), user.getPassword());
 			sendMessage(ep, messageUnreg, new CountDownLatch(1));
 			Long tasklEnd = System.currentTimeMillis();
-			log.append("task start at: " + new Date(taskStart) + nl);
-			log.append("task end at: " + new Date(tasklEnd) + nl);
-			log.append("task time : " + TimeUnit.MILLISECONDS.toSeconds((tasklEnd - taskStart))+ " sec" + nl);
-			log.append("task time : " + (tasklEnd - taskStart) + " msec" + nl);
-			log.append("]");
+			trace.append("task start at: " + new Date(taskStart) + nl);
+			trace.append("task end at: " + new Date(tasklEnd) + nl);
+			trace.append("task time : " + TimeUnit.MILLISECONDS.toSeconds((tasklEnd - taskStart))+ " sec" + nl);
+			trace.append("task time : " + (tasklEnd - taskStart) + " msec" + nl);
+			trace.append("]");
+			ep.closeSession();
 		}
-		return log.toString();
+		return trace.toString();
 	}
 
 	private void sendMessage(MyClientEndpoint ep, String message, CountDownLatch letch) {
@@ -47,8 +58,7 @@ public class Task implements Callable<String> {
 		try {
 			letch.await();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			_log.error(e.getMessage(), e);
 		}
 	}
 }

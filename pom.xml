@@ -7,10 +7,10 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>
-			../authenticate-server
+			./authenticate-server
 		</module>
 		<module>
-			../authenticate-test
+			./authenticate-test
 		</module>
 	</modules>
 </project>
